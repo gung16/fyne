@@ -3,71 +3,136 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Fyne - Skincare Tracker{% endblock %}</title>
-    
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'fyne-deep': '#3E1E68',
+                        'fyne-plum': '#5D2F77',
+                        'fyne-rose': '#E45A92',
+                        'fyne-blush': '#FFACAC',
+                        'fyne-soft': '#FDF5F8'
+                    },
+                    boxShadow: {
+                        'fyne-glow': '0 18px 45px rgba(228, 90, 146, 0.35)',
+                    },
+                    borderRadius: {
+                        '3xl': '1.75rem',
+                    }
+                }
+            }
+        }
+    </script>
+
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Your legacy CSS (if needed) -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <div class="mobile-container">
+<body class="min-h-screen bg-gradient-to-br from-fyne-deep via-fyne-plum to-fyne-deep flex items-center justify-center text-slate-900">
+<div class="relative w-full max-w-sm mx-auto">
+    <!-- soft background glow shapes -->
+    <div class="pointer-events-none absolute -top-24 -right-10 h-40 w-40 rounded-full bg-fyne-rose/40 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-24 -left-10 h-40 w-40 rounded-full bg-fyne-blush/40 blur-3xl"></div>
+
+    <div class="relative mobile-container bg-white/80 backdrop-blur-xl rounded-3xl shadow-fyne-glow overflow-hidden flex flex-col min-h-[640px]">
         <!-- Header -->
         {% block header %}
-        <div class="header">
-            <h1>{% block page_title %}Fyne{% endblock %}</h1>
-            <a href="{% url 'users:profile' %}" style="text-decoration: none;">
-                <i class="fas fa-user-circle header-icon"></i>
+        <header class="flex items-center justify-between px-6 pt-5 pb-3 border-b border-slate-100/60">
+            <div class="flex flex-col">
+                <span class="text-[11px] uppercase tracking-[0.18em] text-fyne-rose font-semibold">
+                    Fyne
+                </span>
+                <h1 class="text-lg font-semibold text-fyne-deep">{% block page_title %}Fyne{% endblock %}</h1>
+            </div>
+            <a href="{% url 'users:profile' %}" class="text-fyne-rose/80 hover:text-fyne-rose transition">
+                <i class="fas fa-user-circle text-2xl"></i>
             </a>
-        </div>
+        </header>
         {% endblock %}
-        
+
         <!-- Main Content -->
-        <div class="main-content">
+        <main class="main-content flex-1 overflow-y-auto px-6 pb-28 pt-3">
             {% if messages %}
-                {% for message in messages %}
-                <div class="card" style="background: {% if message.tags == 'success' %}#E8F5E9{% elif message.tags == 'error' %}#FFEBEE{% else %}#E3F2FD{% endif %}; border-left: 4px solid {% if message.tags == 'success' %}#4CAF50{% elif message.tags == 'error' %}#F44336{% else %}#2196F3{% endif %};">
-                    {{ message }}
+                <div class="space-y-3 mb-4">
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            {% with bg='bg-emerald-50' border='border-emerald-300' text='text-emerald-800' %}
+                                <div class="rounded-2xl border px-4 py-3 text-sm flex items-start gap-3 {{ bg }} {{ border }} {{ text }}">
+                                    <i class="fa-solid fa-circle-check mt-0.5"></i>
+                                    <p>{{ message }}</p>
+                                </div>
+                            {% endwith %}
+                        {% elif message.tags == 'error' %}
+                            {% with bg='bg-rose-50' border='border-rose-300' text='text-rose-800' %}
+                                <div class="rounded-2xl border px-4 py-3 text-sm flex items-start gap-3 {{ bg }} {{ border }} {{ text }}">
+                                    <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                                    <p>{{ message }}</p>
+                                </div>
+                            {% endwith %}
+                        {% else %}
+                            {% with bg='bg-sky-50' border='border-sky-300' text='text-sky-800' %}
+                                <div class="rounded-2xl border px-4 py-3 text-sm flex items-start gap-3 {{ bg }} {{ border }} {{ text }}">
+                                    <i class="fa-solid fa-circle-info mt-0.5"></i>
+                                    <p>{{ message }}</p>
+                                </div>
+                            {% endwith %}
+                        {% endif %}
+                    {% endfor %}
                 </div>
-                {% endfor %}
             {% endif %}
-            
+
             {% block content %}{% endblock %}
-        </div>
-        
+        </main>
+
         <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                <i class="fas fa-home nav-icon"></i>
-                <span class="nav-label">Home</span>
-            </a>
-            
-            <a href="{% url 'checkpoints:daily_checkpoint' %}" class="nav-item {% if 'checkpoints' in request.path %}active{% endif %}">
-                <i class="fas fa-camera nav-icon"></i>
-                <span class="nav-label">Scan</span>
-            </a>
-            
-            <a href="{% url 'products:product_list' %}" class="nav-item {% if 'products' in request.path %}active{% endif %}">
-                <i class="fas fa-flask nav-icon"></i>
-                <span class="nav-label">Products</span>
-            </a>
-            
-            <a href="{% url 'progress:progress_view' %}" class="nav-item {% if 'progress' in request.path %}active{% endif %}">
-                <i class="fas fa-chart-line nav-icon"></i>
-                <span class="nav-label">Progress</span>
-            </a>
-            
-            <a href="{% url 'users:profile' %}" class="nav-item {% if 'users' in request.path %}active{% endif %}">
-                <i class="fas fa-user nav-icon"></i>
-                <span class="nav-label">Profile</span>
-            </a>
+        <nav class="bottom-nav fixed left-1/2 -translate-x-1/2 bottom-4 w-full max-w-sm px-4">
+            <div class="mx-auto flex items-center justify-between rounded-full bg-fyne-deep text-white/80 shadow-xl px-4 py-3 border border-white/10 backdrop-blur-lg">
+                <a href="{% url 'dashboard' %}"
+                   class="nav-item flex flex-col items-center gap-0.5 text-[11px] {% if request.resolver_match.url_name == 'dashboard' %}text-fyne-blush{% else %}text-white/70{% endif %}">
+                    <i class="fas fa-home nav-icon text-[17px]"></i>
+                    <span class="nav-label">Home</span>
+                </a>
+
+                <a href="{% url 'checkpoints:daily_checkpoint' %}"
+                   class="nav-item flex flex-col items-center gap-0.5 text-[11px] {% if 'checkpoints' in request.path %}text-fyne-blush{% else %}text-white/70{% endif %}">
+                    <i class="fas fa-camera nav-icon text-[17px]"></i>
+                    <span class="nav-label">Scan</span>
+                </a>
+
+                <a href="{% url 'products:product_list' %}"
+                   class="nav-item flex flex-col items-center gap-0.5 text-[11px] {% if 'products' in request.path %}text-fyne-blush{% else %}text-white/70{% endif %}">
+                    <i class="fas fa-flask nav-icon text-[17px]"></i>
+                    <span class="nav-label">Products</span>
+                </a>
+
+                <a href="{% url 'progress:progress_view' %}"
+                   class="nav-item flex flex-col items-center gap-0.5 text-[11px] {% if 'progress' in request.path %}text-fyne-blush{% else %}text-white/70{% endif %}">
+                    <i class="fas fa-chart-line nav-icon text-[17px]"></i>
+                    <span class="nav-label">Progress</span>
+                </a>
+
+                <a href="{% url 'users:profile' %}"
+                   class="nav-item flex flex-col items-center gap-0.5 text-[11px] {% if 'users' in request.path %}text-fyne-blush{% else %}text-white/70{% endif %}">
+                    <i class="fas fa-user nav-icon text-[17px]"></i>
+                    <span class="nav-label">Profile</span>
+                </a>
+            </div>
         </nav>
     </div>
-    
-    {% block extra_js %}{% endblock %}
+</div>
+
+{% block extra_js %}{% endblock %}
 </body>
 </html>
