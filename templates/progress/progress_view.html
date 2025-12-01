@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Progress Tracking{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--primary-dark); margin-bottom: 10px;">Your Progress 📊</h2>
+    <p class="text-small" style="color: var(--dark-gray);">Track your skincare journey over time</p>
+</div>
+
+<!-- Current Stats -->
+{% if latest %}
+<div class="card">
+    <h3 class="card-title mb-10">Current Status</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light)); border-radius: 15px; color: white;">
+            <div style="font-size: 32px; font-weight: 700;">{{ latest.overall_skin_score|floatformat:0 }}</div>
+            <div style="font-size: 12px; opacity: 0.9;">Latest Score</div>
+        </div>
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, var(--primary-dark), var(--primary-medium)); border-radius: 15px; color: white;">
+            <div style="font-size: 32px; font-weight: 700;">{{ avg_score|floatformat:0 }}</div>
+            <div style="font-size: 12px; opacity: 0.9;">Average Score</div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 15px; padding: 15px; background: var(--light-gray); border-radius: 12px; text-align: center;">
+        <span class="trend-{{ latest.improvement_trend }}" style="font-size: 16px; font-weight: 600;">
+            <i class="fas fa-arrow-{% if latest.improvement_trend == 'improving' %}up{% elif latest.improvement_trend == 'declining' %}down{% else %}right{% endif %}"></i>
+            {{ latest.get_improvement_trend_display }}
+        </span>
+    </div>
+</div>
+{% endif %}
+
+<!-- Progress Timeline -->
+{% if progress_records %}
+<div class="card">
+    <h3 class="card-title mb-10">Recent History</h3>
+    {% for record in progress_records %}
+    <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <div class="timeline-date">{{ record.timestamp|date:"M d, Y" }}</div>
+            <div class="timeline-text">
+                <strong>Score: {{ record.overall_skin_score|floatformat:0 }}</strong>
+                <span class="trend-{{ record.improvement_trend }}" style="margin-left: 10px;">
+                    <i class="fas fa-arrow-{% if record.improvement_trend == 'improving' %}up{% elif record.improvement_trend == 'declining' %}down{% else %}right{% endif %}"></i>
+                    {{ record.get_improvement_trend_display }}
+                </span>
+            </div>
+            {% if record.insight_notes %}
+            <p class="text-small" style="margin-top: 5px; color: var(--dark-gray);">{{ record.insight_notes }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-icon">📈</div>
+        <div class="empty-title">No Progress Data Yet</div>
+        <div class="empty-text">Complete daily checkpoints to track your progress</div>
+        <a href="{% url 'checkpoints:daily_checkpoint' %}" class="btn btn-primary">Start Tracking</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Insights -->
+<a href="{% url 'progress:insights' %}" class="btn btn-secondary btn-block">
+    <i class="fas fa-lightbulb"></i> View Insights & Recommendations
+</a>
+{% endblock %}

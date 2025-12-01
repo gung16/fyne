@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Daily Checkpoint{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--primary-dark); margin-bottom: 10px;">Daily Skin Checkpoint 📸</h2>
+    <p class="text-small" style="color: var(--dark-gray);">Rate your skin condition today (0-100 scale)</p>
+</div>
+
+{% if today_checkpoint %}
+<div class="card">
+    <div style="text-align: center; padding: 20px;">
+        <i class="fas fa-check-circle" style="font-size: 64px; color: var(--success); margin-bottom: 15px;"></i>
+        <h3 style="color: var(--primary-dark);">Already Done Today! ✓</h3>
+        <p style="color: var(--dark-gray); margin: 15px 0;">You've completed your checkpoint for today.</p>
+        <a href="{% url 'checkpoints:checkpoint_detail' today_checkpoint.pk %}" class="btn btn-primary btn-block">View Results</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-block mt-10">Back to Dashboard</a>
+    </div>
+</div>
+{% else %}
+<form method="post" class="card">
+    {% csrf_token %}
+    
+    <!-- Acne Level -->
+    <div class="form-group">
+        <label class="form-label">
+            <i class="fas fa-dot-circle"></i> Acne Level
+            <span class="text-small" style="color: var(--dark-gray);">(0 = Clear, 100 = Severe)</span>
+        </label>
+        <input type="range" name="acne_level" min="0" max="100" value="0" class="form-control" 
+               oninput="this.nextElementSibling.textContent = this.value" style="margin-bottom: 5px;">
+        <div style="text-align: center; font-weight: 700; color: var(--secondary-pink);">0</div>
+    </div>
+    
+    <!-- Oil Level -->
+    <div class="form-group">
+        <label class="form-label">
+            <i class="fas fa-tint"></i> Oil Level
+            <span class="text-small" style="color: var(--dark-gray);">(0 = Dry, 100 = Very Oily)</span>
+        </label>
+        <input type="range" name="oil_level" min="0" max="100" value="0" class="form-control"
+               oninput="this.nextElementSibling.textContent = this.value" style="margin-bottom: 5px;">
+        <div style="text-align: center; font-weight: 700; color: var(--secondary-pink);">0</div>
+    </div>
+    
+    <!-- Dark Spots -->
+    <div class="form-group">
+        <label class="form-label">
+            <i class="fas fa-circle"></i> Dark Spots
+            <span class="text-small" style="color: var(--dark-gray);">(0 = None, 100 = Many)</span>
+        </label>
+        <input type="range" name="dark_spot_score" min="0" max="100" value="0" class="form-control"
+               oninput="this.nextElementSibling.textContent = this.value" style="margin-bottom: 5px;">
+        <div style="text-align: center; font-weight: 700; color: var(--secondary-pink);">0</div>
+    </div>
+    
+    <!-- Redness -->
+    <div class="form-group">
+        <label class="form-label">
+            <i class="fas fa-fire"></i> Redness
+            <span class="text-small" style="color: var(--dark-gray);">(0 = None, 100 = Severe)</span>
+        </label>
+        <input type="range" name="redness_score" min="0" max="100" value="0" class="form-control"
+               oninput="this.nextElementSibling.textContent = this.value" style="margin-bottom: 5px;">
+        <div style="text-align: center; font-weight: 700; color: var(--secondary-pink);">0</div>
+    </div>
+    
+    <!-- Hydration -->
+    <div class="form-group">
+        <label class="form-label">
+            <i class="fas fa-droplet"></i> Hydration
+            <span class="text-small" style="color: var(--dark-gray);">(0 = Very Dry, 100 = Well Hydrated)</span>
+        </label>
+        <input type="range" name="hydration_score" min="0" max="100" value="50" class="form-control"
+               oninput="this.nextElementSibling.textContent = this.value" style="margin-bottom: 5px;">
+        <div style="text-align: center; font-weight: 700; color: var(--secondary-pink);">50</div>
+    </div>
+    
+    <!-- Texture -->
+    <div class="form-group">
+        <label class="form-label">
+            <i class="fas fa-layer-group"></i> Texture Quality
+            <span class="text-small" style="color: var(--dark-gray);">(0 = Rough, 100 = Smooth)</span>
+        </label>
+        <input type="range" name="texture_score" min="0" max="100" value="50" class="form-control"
+               oninput="this.nextElementSibling.textContent = this.value" style="margin-bottom: 5px;">
+        <div style="text-align: center; font-weight: 700; color: var(--secondary-pink);">50</div>
+    </div>
+    
+    <!-- Notes -->
+    <div class="form-group">
+        <label class="form-label">
+            <i class="fas fa-note-sticky"></i> Notes (Optional)
+        </label>
+        <textarea name="notes" class="form-control" rows="3" placeholder="Any observations about your skin today..."></textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary btn-block">
+        <i class="fas fa-save"></i> Save Checkpoint
+    </button>
+</form>
+{% endif %}
+{% endblock %}

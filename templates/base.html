@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}Fyne - Skincare Tracker{% endblock %}</title>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Header -->
+        {% block header %}
+        <div class="header">
+            <h1>{% block page_title %}Fyne{% endblock %}</h1>
+            <a href="{% url 'users:profile' %}" style="text-decoration: none;">
+                <i class="fas fa-user-circle header-icon"></i>
+            </a>
+        </div>
+        {% endblock %}
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="card" style="background: {% if message.tags == 'success' %}#E8F5E9{% elif message.tags == 'error' %}#FFEBEE{% else %}#E3F2FD{% endif %}; border-left: 4px solid {% if message.tags == 'success' %}#4CAF50{% elif message.tags == 'error' %}#F44336{% else %}#2196F3{% endif %};">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Home</span>
+            </a>
+            
+            <a href="{% url 'checkpoints:daily_checkpoint' %}" class="nav-item {% if 'checkpoints' in request.path %}active{% endif %}">
+                <i class="fas fa-camera nav-icon"></i>
+                <span class="nav-label">Scan</span>
+            </a>
+            
+            <a href="{% url 'products:product_list' %}" class="nav-item {% if 'products' in request.path %}active{% endif %}">
+                <i class="fas fa-flask nav-icon"></i>
+                <span class="nav-label">Products</span>
+            </a>
+            
+            <a href="{% url 'progress:progress_view' %}" class="nav-item {% if 'progress' in request.path %}active{% endif %}">
+                <i class="fas fa-chart-line nav-icon"></i>
+                <span class="nav-label">Progress</span>
+            </a>
+            
+            <a href="{% url 'users:profile' %}" class="nav-item {% if 'users' in request.path %}active{% endif %}">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-label">Profile</span>
+            </a>
+        </nav>
+    </div>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

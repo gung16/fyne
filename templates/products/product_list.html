@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 style="color: var(--primary-dark);">My Products</h2>
+        <a href="{% url 'products:add_product' %}" style="color: var(--secondary-pink); text-decoration: none;">
+            <i class="fas fa-plus-circle" style="font-size: 28px;"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Active Products -->
+{% if user_products %}
+<div class="card">
+    <h3 class="card-title mb-10">Active Routine</h3>
+    {% for usage in user_products %}
+    <a href="{% url 'products:product_detail' usage.product.pk %}" style="text-decoration: none; color: inherit;">
+        <div class="product-item">
+            <div class="product-icon">
+                <i class="fas fa-{% if usage.product.category == 'cleanser' %}soap{% elif usage.product.category == 'sunscreen' %}sun{% elif usage.product.category == 'serum' %}eye-dropper{% elif usage.product.category == 'moisturizer' %}spray-can{% else %}flask{% endif %}"></i>
+            </div>
+            <div class="product-info">
+                <div class="product-name">{{ usage.product.name }}</div>
+                <div class="product-brand">{{ usage.product.brand }} • {{ usage.get_frequency_display }}</div>
+            </div>
+            <i class="fas fa-chevron-right" style="color: var(--medium-gray);"></i>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-icon">💧</div>
+        <div class="empty-title">No Products Yet</div>
+        <div class="empty-text">Start building your skincare routine by adding products</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- All Products -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Product Catalog</h3>
+        <a href="{% url 'products:add_product' %}" style="color: var(--secondary-pink); font-size: 13px; text-decoration: none;">
+            Add New
+        </a>
+    </div>
+    
+    {% if all_products %}
+        {% for product in all_products %}
+        <a href="{% url 'products:product_detail' product.pk %}" style="text-decoration: none; color: inherit;">
+            <div class="product-item">
+                <div class="product-icon" style="background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light));">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <div class="product-info">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-brand">{{ product.brand }} • {{ product.get_category_display }}</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--medium-gray);"></i>
+            </div>
+        </a>
+        {% endfor %}
+    {% else %}
+        <div style="text-align: center; padding: 30px;">
+            <p style="color: var(--dark-gray);">No products in catalog yet.</p>
+            <a href="{% url 'products:add_product' %}" class="btn btn-primary mt-10">Add First Product</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Ingredient Safety -->
+<a href="{% url 'products:ingredient_safety' %}" class="btn btn-secondary btn-block">
+    <i class="fas fa-shield-alt"></i> Check Ingredient Safety
+</a>
+{% endblock %}

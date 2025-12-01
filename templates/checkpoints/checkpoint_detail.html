@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Checkpoint Details{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--primary-dark); margin-bottom: 5px;">Checkpoint Results</h2>
+    <p class="text-small" style="color: var(--dark-gray);">{{ checkpoint.timestamp|date:"F d, Y - g:i A" }}</p>
+</div>
+
+<!-- Overall Score -->
+<div class="card">
+    <div class="score-circle">
+        <div class="score-value">{{ checkpoint.overall_score|floatformat:0 }}</div>
+        <div class="score-label">Overall</div>
+    </div>
+</div>
+
+<!-- Detailed Metrics -->
+<div class="card">
+    <h3 class="card-title mb-10">Skin Metrics</h3>
+    
+    <div class="metric-item">
+        <div class="metric-label">
+            <span><i class="fas fa-dot-circle"></i> Acne Level</span>
+            <span><strong>{{ checkpoint.acne_level }}</strong>/100</span>
+        </div>
+        <div class="metric-bar">
+            <div class="metric-fill {% if checkpoint.acne_level < 30 %}low{% elif checkpoint.acne_level < 70 %}medium{% else %}high{% endif %}" 
+                 style="width: {{ checkpoint.acne_level }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="metric-item">
+        <div class="metric-label">
+            <span><i class="fas fa-tint"></i> Oil Level</span>
+            <span><strong>{{ checkpoint.oil_level }}</strong>/100</span>
+        </div>
+        <div class="metric-bar">
+            <div class="metric-fill {% if checkpoint.oil_level < 30 %}low{% elif checkpoint.oil_level < 70 %}medium{% else %}high{% endif %}" 
+                 style="width: {{ checkpoint.oil_level }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="metric-item">
+        <div class="metric-label">
+            <span><i class="fas fa-circle"></i> Dark Spots</span>
+            <span><strong>{{ checkpoint.dark_spot_score }}</strong>/100</span>
+        </div>
+        <div class="metric-bar">
+            <div class="metric-fill {% if checkpoint.dark_spot_score < 30 %}low{% elif checkpoint.dark_spot_score < 70 %}medium{% else %}high{% endif %}" 
+                 style="width: {{ checkpoint.dark_spot_score }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="metric-item">
+        <div class="metric-label">
+            <span><i class="fas fa-fire"></i> Redness</span>
+            <span><strong>{{ checkpoint.redness_score }}</strong>/100</span>
+        </div>
+        <div class="metric-bar">
+            <div class="metric-fill {% if checkpoint.redness_score < 30 %}low{% elif checkpoint.redness_score < 70 %}medium{% else %}high{% endif %}" 
+                 style="width: {{ checkpoint.redness_score }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="metric-item">
+        <div class="metric-label">
+            <span><i class="fas fa-droplet"></i> Hydration</span>
+            <span><strong>{{ checkpoint.hydration_score }}</strong>/100</span>
+        </div>
+        <div class="metric-bar">
+            <div class="metric-fill {% if checkpoint.hydration_score > 70 %}low{% elif checkpoint.hydration_score > 30 %}medium{% else %}high{% endif %}" 
+                 style="width: {{ checkpoint.hydration_score }}%;"></div>
+        </div>
+    </div>
+    
+    <div class="metric-item">
+        <div class="metric-label">
+            <span><i class="fas fa-layer-group"></i> Texture</span>
+            <span><strong>{{ checkpoint.texture_score }}</strong>/100</span>
+        </div>
+        <div class="metric-bar">
+            <div class="metric-fill {% if checkpoint.texture_score > 70 %}low{% elif checkpoint.texture_score > 30 %}medium{% else %}high{% endif %}" 
+                 style="width: {{ checkpoint.texture_score }}%;"></div>
+        </div>
+    </div>
+</div>
+
+{% if checkpoint.notes %}
+<div class="card">
+    <h3 class="card-title mb-10">Notes</h3>
+    <p style="color: var(--text-dark);">{{ checkpoint.notes }}</p>
+</div>
+{% endif %}
+
+<a href="{% url 'dashboard' %}" class="btn btn-secondary btn-block">Back to Dashboard</a>
+{% endblock %}

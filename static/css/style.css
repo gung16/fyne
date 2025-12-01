@@ -1,0 +1,460 @@
+/* Fyne - Mobile-First Skincare App Styles */
+
+/* Color Palette */
+:root {
+    --primary-dark: #3E1E68;
+    --primary-medium: #5D2F77;
+    --secondary-pink: #E45A92;
+    --secondary-light: #FFACAC;
+    --white: #FFFFFF;
+    --light-gray: #F5F5F5;
+    --medium-gray: #E0E0E0;
+    --dark-gray: #666666;
+    --text-dark: #333333;
+    --success: #4CAF50;
+    --warning: #FF9800;
+    --danger: #F44336;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #000000;
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Mobile Container - Centers content like a phone screen */
+.mobile-container {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
+    position: relative;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 20px 20px 90px 20px; /* Extra bottom padding for navbar */
+    min-height: calc(100vh - 70px);
+}
+
+/* Header */
+.header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header h1 {
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.header-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--secondary-light);
+}
+
+/* Cards */
+.card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: var(--dark-gray);
+    margin-bottom: 10px;
+}
+
+/* Score Display */
+.score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--white);
+    margin: 20px auto;
+    box-shadow: 0 8px 20px rgba(228, 90, 146, 0.3);
+}
+
+.score-value {
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.score-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Metric Bars */
+.metric-item {
+    margin-bottom: 15px;
+}
+
+.metric-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.metric-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--light-gray);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.metric-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.metric-fill.low {
+    background: linear-gradient(90deg, var(--success), #8BC34A);
+}
+
+.metric-fill.medium {
+    background: linear-gradient(90deg, var(--warning), #FFB74D);
+}
+
+.metric-fill.high {
+    background: linear-gradient(90deg, var(--danger), #EF5350);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light));
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(228, 90, 146, 0.4);
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--primary-dark);
+    border: 2px solid var(--primary-dark);
+}
+
+.btn-block {
+    width: 100%;
+    display: block;
+}
+
+/* Product Items */
+.product-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: var(--light-gray);
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.product-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-medium), var(--primary-dark));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: var(--white);
+    font-size: 24px;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+}
+
+.product-brand {
+    font-size: 13px;
+    color: var(--dark-gray);
+}
+
+.product-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-safe {
+    background: #E8F5E9;
+    color: var(--success);
+}
+
+.badge-caution {
+    background: #FFF3E0;
+    color: var(--warning);
+}
+
+.badge-avoid {
+    background: #FFEBEE;
+    color: var(--danger);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: var(--white);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid var(--medium-gray);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 20px 0;
+    z-index: 1000;
+}
+
+.nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--dark-gray);
+    transition: all 0.3s ease;
+}
+
+.nav-item.active {
+    color: var(--secondary-pink);
+}
+
+.nav-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.nav-label {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--medium-gray);
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--secondary-pink);
+}
+
+/* Progress Timeline */
+.timeline-item {
+    position: relative;
+    padding-left: 30px;
+    padding-bottom: 20px;
+}
+
+.timeline-item:before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 2px;
+    height: calc(100% - 8px);
+    background: var(--medium-gray);
+}
+
+.timeline-item:last-child:before {
+    display: none;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--secondary-pink);
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--secondary-pink);
+}
+
+.timeline-content {
+    background: var(--light-gray);
+    padding: 12px 15px;
+    border-radius: 12px;
+}
+
+.timeline-date {
+    font-size: 12px;
+    color: var(--dark-gray);
+    margin-bottom: 5px;
+}
+
+.timeline-text {
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+/* Trend Indicators */
+.trend-improving {
+    color: var(--success);
+}
+
+.trend-stable {
+    color: var(--warning);
+}
+
+.trend-declining {
+    color: var(--danger);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    color: var(--medium-gray);
+    margin-bottom: 20px;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 10px;
+}
+
+.empty-text {
+    font-size: 14px;
+    color: var(--dark-gray);
+    margin-bottom: 20px;
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.text-white {
+    color: var(--white);
+}
+
+.text-small {
+    font-size: 13px;
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-width: 375px) {
+    .main-content {
+        padding: 15px 15px 85px 15px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+}

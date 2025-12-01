@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="card">
+    <h2 style="color: var(--primary-dark); margin-bottom: 10px;">Welcome back, {{ user.username }}! 👋</h2>
+    <p class="text-small" style="color: var(--dark-gray);">Here's your skincare summary for today</p>
+</div>
+
+<!-- Today's Skin Score -->
+{% if latest_progress %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Today's Skin Score</h3>
+        <span class="trend-{{ latest_progress.improvement_trend }}">
+            <i class="fas fa-arrow-{% if latest_progress.improvement_trend == 'improving' %}up{% elif latest_progress.improvement_trend == 'declining' %}down{% else %}right{% endif %}"></i>
+            {{ latest_progress.get_improvement_trend_display }}
+        </span>
+    </div>
+    <div class="score-circle">
+        <div class="score-value">{{ latest_progress.overall_skin_score|floatformat:0 }}</div>
+        <div class="score-label">Score</div>
+    </div>
+    <p class="text-center text-small" style="color: var(--dark-gray);">{{ latest_progress.timestamp|date:"F d, Y" }}</p>
+</div>
+{% endif %}
+
+<!-- Daily Checkpoint Status -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Daily Checkpoint</h3>
+        {% if today_checkpoint %}
+        <i class="fas fa-check-circle" style="color: var(--success); font-size: 24px;"></i>
+        {% else %}
+        <i class="fas fa-exclamation-circle" style="color: var(--warning); font-size: 24px;"></i>
+        {% endif %}
+    </div>
+    
+    {% if today_checkpoint %}
+        <p style="color: var(--success); margin-bottom: 15px;">✓ Checkpoint completed today!</p>
+        <a href="{% url 'checkpoints:checkpoint_detail' today_checkpoint.pk %}" class="btn btn-secondary btn-block">View Details</a>
+    {% else %}
+        <p style="color: var(--dark-gray); margin-bottom: 15px;">You haven't done your checkpoint today.</p>
+        <a href="{% url 'checkpoints:daily_checkpoint' %}" class="btn btn-primary btn-block">
+            <i class="fas fa-camera"></i> Take Daily Scan
+        </a>
+    {% endif %}
+</div>
+
+<!-- UV Index Today -->
+{% if latest_uv %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">UV Index</h3>
+        <i class="fas fa-sun" style="color: var(--warning); font-size: 20px;"></i>
+    </div>
+    <div style="display: flex; justify-content: space-around; text-align: center;">
+        <div>
+            <div style="font-size: 28px; font-weight: 700; color: var(--secondary-pink);">{{ latest_uv.uv_index }}</div>
+            <div class="text-small" style="color: var(--dark-gray);">UV Index</div>
+        </div>
+        <div>
+            <div style="font-size: 28px; font-weight: 700; color: var(--primary-medium);">{{ latest_uv.humidity }}%</div>
+            <div class="text-small" style="color: var(--dark-gray);">Humidity</div>
+        </div>
+    </div>
+    <div class="mt-10 text-center">
+        <a href="{% url 'checkpoints:uv_tracker' %}" class="text-small" style="color: var(--secondary-pink); text-decoration: none;">View Full Report →</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Active Products -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Your Routine</h3>
+        <a href="{% url 'products:product_list' %}" style="color: var(--secondary-pink); text-decoration: none;">
+            <i class="fas fa-plus-circle"></i>
+        </a>
+    </div>
+    
+    {% if active_products %}
+        {% for usage in active_products %}
+        <div class="product-item">
+            <div class="product-icon">
+                <i class="fas fa-flask"></i>
+            </div>
+            <div class="product-info">
+                <div class="product-name">{{ usage.product.name }}</div>
+                <div class="product-brand">{{ usage.product.brand }} • {{ usage.get_frequency_display }}</div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% if active_products|length >= 5 %}
+        <a href="{% url 'products:product_list' %}" class="btn btn-secondary btn-block mt-10">View All Products</a>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">💧</div>
+            <div class="empty-title">No products yet</div>
+            <div class="empty-text">Start building your skincare routine</div>
+            <a href="{% url 'products:product_list' %}" class="btn btn-primary">Add Products</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Quick Stats -->
+<div class="card">
+    <h3 class="card-title mb-10">7-Day Overview</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div style="text-align: center; padding: 15px; background: var(--light-gray); border-radius: 12px;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--primary-dark);">{{ recent_checkpoints|length }}</div>
+            <div class="text-small" style="color: var(--dark-gray);">Checkpoints</div>
+        </div>
+        <div style="text-align: center; padding: 15px; background: var(--light-gray); border-radius: 12px;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--secondary-pink);">{{ active_products|length }}</div>
+            <div class="text-small" style="color: var(--dark-gray);">Active Products</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

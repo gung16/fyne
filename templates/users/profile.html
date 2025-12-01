@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Profile{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="text-align: center; padding: 20px 0;">
+        <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light)); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: white; font-size: 36px;">
+            <i class="fas fa-user"></i>
+        </div>
+        <h2 style="color: var(--primary-dark); margin-bottom: 5px;">{{ user.username }}</h2>
+        <p style="color: var(--dark-gray); font-size: 14px;">{{ user.email }}</p>
+    </div>
+</div>
+
+<!-- Profile Stats -->
+<div class="card">
+    <h3 class="card-title mb-10">Your Stats</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
+        <div style="padding: 15px; background: var(--light-gray); border-radius: 12px;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--primary-dark);">{{ total_checkpoints }}</div>
+            <div class="text-small" style="color: var(--dark-gray);">Checkpoints</div>
+        </div>
+        <div style="padding: 15px; background: var(--light-gray); border-radius: 12px;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--secondary-pink);">{{ active_products }}</div>
+            <div class="text-small" style="color: var(--dark-gray);">Products</div>
+        </div>
+        <div style="padding: 15px; background: var(--light-gray); border-radius: 12px;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--primary-medium);">{% if latest_progress %}{{ latest_progress.overall_skin_score|floatformat:0 }}{% else %}--{% endif %}</div>
+            <div class="text-small" style="color: var(--dark-gray);">Score</div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Info -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Profile Information</h3>
+        <a href="{% url 'users:profile_edit' %}" style="color: var(--secondary-pink); text-decoration: none;">
+            <i class="fas fa-edit"></i>
+        </a>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <div class="text-small" style="color: var(--dark-gray); margin-bottom: 3px;">Skin Type</div>
+        <div style="font-weight: 600; color: var(--text-dark);">{{ profile.get_skin_type_display }}</div>
+    </div>
+    
+    {% if profile.age %}
+    <div style="margin-bottom: 15px;">
+        <div class="text-small" style="color: var(--dark-gray); margin-bottom: 3px;">Age</div>
+        <div style="font-weight: 600; color: var(--text-dark);">{{ profile.age }} years old</div>
+    </div>
+    {% endif %}
+    
+    {% if profile.location %}
+    <div style="margin-bottom: 15px;">
+        <div class="text-small" style="color: var(--dark-gray); margin-bottom: 3px;">Location</div>
+        <div style="font-weight: 600; color: var(--text-dark);">{{ profile.location }}</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Settings -->
+<a href="{% url 'logout' %}" class="btn btn-secondary btn-block">
+    <i class="fas fa-sign-out-alt"></i> Logout
+</a>
+{% endblock %}
