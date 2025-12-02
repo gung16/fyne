@@ -44,7 +44,7 @@ def dashboard(request):
 def custom_login(request):
     """Custom login view that auto-accepts admin/admin123"""
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('/')
     
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -76,18 +76,24 @@ def custom_login(request):
                 user = authenticate(request, username='admin', password='admin123')
                 if user:
                     login(request, user)
+                    # Force session save
+                    request.session.save()
                     messages.success(request, 'Welcome back!')
-                    # Use HttpResponseRedirect for proper redirect
+                    # Use redirect with next parameter support
+                    next_url = request.GET.get('next', '/')
                     from django.http import HttpResponseRedirect
-                    return HttpResponseRedirect('/')
+                    return HttpResponseRedirect(next_url)
             
             # Try normal authentication for other users
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
+                # Force session save
+                request.session.save()
                 messages.success(request, 'Welcome back!')
+                next_url = request.GET.get('next', '/')
                 from django.http import HttpResponseRedirect
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect(next_url)
             else:
                 messages.error(request, 'Invalid username or password.')
         except Exception as e:

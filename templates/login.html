@@ -62,7 +62,7 @@
                                 "
                                 placeholder="Enter your username"
                                 required
-                                autocomplete="username"
+                                autocomplete="off"
                                 maxlength="150"
                                 autofocus
                                 value="{{ form.username.value|default_if_none:'' }}"
@@ -101,7 +101,7 @@
                                 "
                                 placeholder="Enter your password"
                                 required
-                                autocomplete="current-password"
+                                autocomplete="new-password"
                                 maxlength="128"
                                 aria-label="Password"
                             >
