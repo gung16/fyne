@@ -6,6 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Fyne - Skincare Tracker{% endblock %}</title>
     
+    <!-- Meta Tags for Social Media -->
+    <meta name="description" content="FYNE: AI-Powered Solution for Continuous Skin Tracking and Personalized Skincare Improvement">
+    <meta property="og:title" content="FYNE: AI-Powered Solution for Continuous Skin Tracking and Personalized Skincare Improvement">
+    <meta property="og:description" content="Track your skin health, manage your skincare routine, and get personalized insights for better skin.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% static 'fyne-logo.jpeg' %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ request.path }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FYNE: AI-Powered Solution for Continuous Skin Tracking and Personalized Skincare Improvement">
+    <meta name="twitter:description" content="Track your skin health, manage your skincare routine, and get personalized insights for better skin.">
+    <meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% static 'fyne-logo.jpeg' %}">
+    
     <!-- Stylesheet -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     

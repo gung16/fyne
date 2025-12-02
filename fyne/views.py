@@ -50,41 +50,44 @@ def custom_login(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
         
-        # Auto-accept admin/admin123
-        if username == 'admin' and password == 'admin123':
-            # Check if admin user exists, create if not
-            from django.contrib.auth.models import User
-            try:
-                user = User.objects.get(username='admin')
-                # Ensure password is correct
-                if not user.check_password('admin123'):
-                    user.set_password('admin123')
-                    user.is_staff = True
-                    user.is_superuser = True
-                    user.save()
-            except User.DoesNotExist:
-                user = User.objects.create_user(
-                    username='admin',
-                    password='admin123',
-                    email='admin@fyne.com',
-                    is_staff=True,
-                    is_superuser=True
-                )
+        try:
+            # Auto-accept admin/admin123
+            if username == 'admin' and password == 'admin123':
+                # Check if admin user exists, create if not
+                from django.contrib.auth.models import User
+                try:
+                    user = User.objects.get(username='admin')
+                    # Ensure password is correct
+                    if not user.check_password('admin123'):
+                        user.set_password('admin123')
+                        user.is_staff = True
+                        user.is_superuser = True
+                        user.save()
+                except User.DoesNotExist:
+                    user = User.objects.create_user(
+                        username='admin',
+                        password='admin123',
+                        email='admin@fyne.com',
+                        is_staff=True,
+                        is_superuser=True
+                    )
+                
+                # Authenticate and login
+                user = authenticate(request, username='admin', password='admin123')
+                if user:
+                    login(request, user)
+                    messages.success(request, 'Welcome back!')
+                    return redirect('dashboard')
             
-            # Authenticate and login
-            user = authenticate(request, username='admin', password='admin123')
+            # Try normal authentication for other users
+            user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
                 messages.success(request, 'Welcome back!')
                 return redirect('dashboard')
-        
-        # Try normal authentication for other users
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            messages.success(request, 'Welcome back!')
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Invalid username or password.')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        except Exception as e:
+            messages.error(request, 'Database connection error. Please try again later.')
     
     return render(request, 'login.html')

@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-w(idyy1#ky6=3xe8(1=3=^x95#kws0v&+$chnw9ob#)a5bpyq^
 
 # SECURITY WARNING: don't run with debug turned on in production!
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = True
+DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "i-gusti411-fyne.pbp.cs.ui.ac.id"]
 
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -92,19 +93,37 @@ WSGI_APPLICATION = 'fyne.wsgi.application'
 # Database configuration
 if PRODUCTION:
     # Production: gunakan PostgreSQL dengan kredensial dari environment variables
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT'),
-            'OPTIONS': {
-                'options': f"-c search_path={os.getenv('SCHEMA', 'public')}"
+    db_host = os.getenv('DB_HOST', '152.118.29.139')
+    db_port = os.getenv('DB_PORT', '5432')
+    db_name = os.getenv('DB_NAME', 'i.gusti411')
+    db_user = os.getenv('DB_USER', 'i.gusti411')
+    db_password = os.getenv('DB_PASSWORD', 'sLy6hLiQ')
+    db_schema = os.getenv('SCHEMA', 'fyne')
+    
+    # Only use PostgreSQL if all required env vars are set
+    if all([db_name, db_user, db_password, db_host]):
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': db_name,
+                'USER': db_user,
+                'PASSWORD': db_password,
+                'HOST': db_host,
+                'PORT': db_port,
+                'OPTIONS': {
+                    'options': f"-c search_path={db_schema}"
+                },
+                'CONN_MAX_AGE': 600,
             }
         }
-    }
+    else:
+        # Fallback to SQLite if PostgreSQL config is incomplete
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
     # Development: gunakan SQLite
     DATABASES = {
@@ -151,6 +170,9 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# WhiteNoise configuration for static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Media files (uploads)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -164,3 +186,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+
+# Security settings for production
+if PRODUCTION:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
