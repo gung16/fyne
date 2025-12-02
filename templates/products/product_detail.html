@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block page_title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+        <div class="product-icon" style="background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light));">
+            <i class="fas fa-{% if product.category == 'cleanser' %}soap{% elif product.category == 'sunscreen' %}sun{% elif product.category == 'serum' %}eye-dropper{% elif product.category == 'moisturizer' %}spray-can{% else %}flask{% endif %}"></i>
+        </div>
+        <div style="flex: 1; margin-left: 16px;">
+            <h2 style="color: var(--primary-dark); margin: 0 0 5px 0;">{{ product.name }}</h2>
+            <p style="color: var(--dark-gray); margin: 0; font-size: 14px;">{{ product.brand }} • {{ product.get_category_display }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Product Info -->
+<div class="card">
+    <h3 class="card-title mb-10">Product Information</h3>
+    
+    {% if product.description %}
+    <div style="margin-bottom: 20px;">
+        <p style="color: var(--text-dark); line-height: 1.6;">{{ product.description }}</p>
+    </div>
+    {% endif %}
+    
+    {% if product.ingredients %}
+    <div style="margin-bottom: 20px;">
+        <h4 style="color: var(--text-dark); font-size: 14px; font-weight: 600; margin-bottom: 10px;">
+            <i class="fas fa-flask"></i> Key Ingredients
+        </h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            {% for ingredient in product.ingredients %}
+            <span style="
+                padding: 6px 12px;
+                background: var(--light-gray);
+                border-radius: 20px;
+                font-size: 12px;
+                color: var(--text-dark);
+                border: 1px solid var(--border-gray);
+            ">{{ ingredient|trim }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Safety Check -->
+{% if safety_check %}
+<div class="card">
+    <h3 class="card-title mb-10">Safety Check</h3>
+    <div style="padding: 16px; background: {% if safety_check.risk_level == 'safe' %}#E8F5E9{% elif safety_check.risk_level == 'caution' %}#FFF3E0{% else %}#FFEBEE{% endif %}; border-radius: 12px; border-left: 4px solid {% if safety_check.risk_level == 'safe' %}#4CAF50{% elif safety_check.risk_level == 'caution' %}#FF9800{% else %}#F44336{% endif %};">
+        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <i class="fas fa-shield-alt" style="color: {% if safety_check.risk_level == 'safe' %}#4CAF50{% elif safety_check.risk_level == 'caution' %}#FF9800{% else %}#F44336{% endif %}; margin-right: 10px;"></i>
+            <strong style="color: var(--text-dark);">Risk Level: {{ safety_check.get_risk_level_display }}</strong>
+        </div>
+        {% if safety_check.flagged_ingredients %}
+        <div style="margin-top: 10px;">
+            <p style="font-size: 13px; color: var(--text-dark); margin-bottom: 8px;"><strong>Flagged Ingredients:</strong></p>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                {% for ingredient in safety_check.flagged_ingredients %}
+                <span style="padding: 4px 10px; background: rgba(244, 67, 54, 0.1); border-radius: 12px; font-size: 11px; color: #F44336;">{{ ingredient }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% if safety_check.notes %}
+        <p style="font-size: 13px; color: var(--text-dark); margin-top: 10px;">{{ safety_check.notes }}</p>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <a href="{% url 'products:check_product_safety' product.pk %}" class="btn btn-secondary btn-block">
+        <i class="fas fa-shield-alt"></i> Check Ingredient Safety
+    </a>
+</div>
+{% endif %}
+
+<!-- Usage Status -->
+{% if usage %}
+<div class="card">
+    <div style="padding: 16px; background: #E8F5E9; border-radius: 12px; border-left: 4px solid #4CAF50;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <strong style="color: var(--text-dark);">In Your Routine</strong>
+                <p style="font-size: 13px; color: var(--text-dark); margin: 5px 0 0 0;">Frequency: {{ usage.get_frequency_display }}</p>
+                <p style="font-size: 12px; color: var(--dark-gray); margin: 5px 0 0 0;">Started: {{ usage.start_date|date:"M d, Y" }}</p>
+            </div>
+            <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 32px;"></i>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <a href="{% url 'products:add_to_routine' product.pk %}" class="btn btn-primary btn-block">
+        <i class="fas fa-plus-circle"></i> Add to Routine
+    </a>
+</div>
+{% endif %}
+
+<!-- Actions -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <a href="{% url 'products:product_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Products
+    </a>
+    {% if not usage %}
+    <a href="{% url 'products:add_to_routine' product.pk %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add to Routine
+    </a>
+    {% else %}
+    <a href="{% url 'products:product_list' %}" class="btn btn-primary">
+        <i class="fas fa-list"></i> View All
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+

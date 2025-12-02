@@ -10,9 +10,13 @@ def product_list(request):
     user_products = ProductUsage.objects.filter(user=request.user, end_date__isnull=True)
     all_products = SkincareProduct.objects.all()
     
+    # Get list of product IDs that are in user's routine
+    user_product_ids = list(user_products.values_list('product_id', flat=True))
+    
     return render(request, 'products/product_list.html', {
         'user_products': user_products,
         'all_products': all_products,
+        'user_product_ids': user_product_ids,
     })
 
 @login_required
@@ -43,13 +47,22 @@ def product_detail(request, pk):
 def add_product(request):
     """Add new product to catalog"""
     if request.method == 'POST':
+        ingredients_str = request.POST.get('ingredients', '').strip()
+        ingredients_list = [ing.strip() for ing in ingredients_str.split(',') if ing.strip()] if ingredients_str else []
+        
         product = SkincareProduct.objects.create(
             name=request.POST.get('name'),
             brand=request.POST.get('brand'),
             category=request.POST.get('category'),
-            ingredients=request.POST.get('ingredients', '').split(','),
+            ingredients=ingredients_list,
             description=request.POST.get('description', ''),
         )
+        
+        # Handle image upload if provided
+        if 'image' in request.FILES:
+            product.image = request.FILES['image']
+            product.save()
+        
         messages.success(request, 'Product added successfully!')
         return redirect('products:product_detail', pk=product.pk)
     

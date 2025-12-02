@@ -38,25 +38,21 @@ def progress_view(request):
 @login_required
 def insights(request):
     """AI-generated insights and recommendations"""
-    progress_records = ProgressRecord.objects.filter(user=request.user)[:7]
+    # Get the most recent score
+    latest_record = ProgressRecord.objects.filter(user=request.user).first()
+    latest_score = None
     
-    insights_list = []
+    if latest_record:
+        latest_score = latest_record.overall_skin_score
+    else:
+        # Fallback to latest checkpoint if no progress record exists
+        from checkpoints.models import DailyCheckpoint
+        latest_checkpoint = DailyCheckpoint.objects.filter(user=request.user).first()
+        if latest_checkpoint:
+            latest_score = latest_checkpoint.overall_score
     
-    if progress_records.count() >= 3:
-        improving_count = sum(1 for p in progress_records if p.improvement_trend == 'improving')
-        declining_count = sum(1 for p in progress_records if p.improvement_trend == 'declining')
-        
-        if improving_count > declining_count:
-            insights_list.append({
-                'type': 'success',
-                'title': 'Great Progress!',
-                'message': 'Your skin is showing improvement. Keep up your current routine!'
-            })
-        elif declining_count > improving_count:
-            insights_list.append({
-                'type': 'warning',
-                'title': 'Needs Attention',
-                'message': 'Your skin metrics are declining. Consider reviewing your products or consulting a dermatologist.'
-            })
+    context = {
+        'latest_score': latest_score,
+    }
     
-    return render(request, 'progress/insights.html', {'insights': insights_list})
+    return render(request, 'progress/insights.html', context)

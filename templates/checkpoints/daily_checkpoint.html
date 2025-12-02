@@ -7,10 +7,46 @@
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 30px 20px 20px; text-align: center;">
     <div style="position: relative; width: 100%; max-width: 400px; height: 500px; background: linear-gradient(135deg, #FAFAFA, #F5F5F5); border-radius: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border-gray); overflow: hidden; margin-bottom: 30px;">
         <!-- Camera Preview Placeholder -->
-        <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <i class="fas fa-camera" style="font-size: 100px; color: var(--primary-medium); opacity: 0.3; margin-bottom: 25px;"></i>
-            <p style="color: var(--text-medium); font-size: 17px; opacity: 0.7;">Ready for your close-up?</p>
+        <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent;">
+            <video id="cameraPreview" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; border-radius: 30px; background: #f8f8f8;"></video>
+            <div id="cameraPrompt" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2;">
+                <i class="fas fa-camera" style="font-size: 100px; color: var(--primary-medium); opacity: 0.3; margin-bottom: 25px;"></i>
+                <p style="color: var(--text-medium); font-size: 17px; opacity: 0.7;">Ready for your close-up?<br>
+                    <span style="font-size: 14px; color: var(--danger); display:none;" id="cameraError"></span>
+                </p>
+                <button type="button" id="startCameraBtn" onclick="requestCamera()" class="btn btn-secondary" style="margin-top:18px; font-size:15px;">Enable Camera</button>
+            </div>
         </div>
+
+        <script>
+        let cameraStarted = false;
+        async function requestCamera() {
+            const video = document.getElementById('cameraPreview');
+            const prompt = document.getElementById('cameraPrompt');
+            const errorSpan = document.getElementById('cameraError');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({video: { facingMode: "user" }, audio: false});
+                video.srcObject = stream;
+                prompt.style.display = 'none';
+                cameraStarted = true;
+            } catch (err) {
+                errorSpan.textContent = "Camera access denied or unavailable.";
+                errorSpan.style.display = "block";
+            }
+        }
+
+        // (Optional: Enable camera as soon as possible if permissions were already granted)
+        document.addEventListener('DOMContentLoaded', function() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.permissions && navigator.permissions.query({name:'camera'})
+                  .then(function(result) {
+                      if(result.state === 'granted') {
+                          requestCamera();
+                      }
+                  }).catch(function(){}); // silently ignore if API unsupported
+            }
+        });
+        </script>
         
         <!-- Scanning Overlay -->
         <div id="scanOverlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, rgba(62, 30, 104, 0.1) 50%, transparent 100%); opacity: 0; transition: opacity 0.3s;"></div>

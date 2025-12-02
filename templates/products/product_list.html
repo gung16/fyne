@@ -52,18 +52,54 @@
     
     {% if all_products %}
         {% for product in all_products %}
-        <a href="{% url 'products:product_detail' product.pk %}" style="text-decoration: none; color: inherit;">
-            <div class="product-item">
+        <div class="product-item" style="padding: 12px 16px;">
+            <a href="{% url 'products:product_detail' product.pk %}" style="text-decoration: none; color: inherit; flex: 1; display: flex; align-items: center;">
                 <div class="product-icon" style="background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light));">
-                    <i class="fas fa-flask"></i>
+                    <i class="fas fa-{% if product.category == 'cleanser' %}soap{% elif product.category == 'sunscreen' %}sun{% elif product.category == 'serum' %}eye-dropper{% elif product.category == 'moisturizer' %}spray-can{% else %}flask{% endif %}"></i>
                 </div>
                 <div class="product-info">
                     <div class="product-name">{{ product.name }}</div>
                     <div class="product-brand">{{ product.brand }} • {{ product.get_category_display }}</div>
                 </div>
-                <i class="fas fa-chevron-right" style="color: var(--medium-gray);"></i>
-            </div>
-        </a>
+                <i class="fas fa-chevron-right" style="color: var(--medium-gray); margin-left: auto;"></i>
+            </a>
+            {% if product.pk not in user_product_ids %}
+            <a href="{% url 'products:add_to_routine' product.pk %}" style="
+                margin-left: 10px;
+                padding: 8px 16px;
+                background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light));
+                color: white;
+                border-radius: 20px;
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: 600;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            ">
+                <i class="fas fa-plus" style="font-size: 10px;"></i>
+                Add
+            </a>
+            {% else %}
+            <span style="
+                margin-left: 10px;
+                padding: 8px 16px;
+                background: #E8F5E9;
+                color: #4CAF50;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            ">
+                <i class="fas fa-check" style="font-size: 10px;"></i>
+                Added
+            </span>
+            {% endif %}
+        </div>
         {% endfor %}
     {% else %}
         <div style="text-align: center; padding: 30px;">

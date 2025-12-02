@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Add to Routine{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+        <div class="product-icon" style="background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light));">
+            <i class="fas fa-{% if product.category == 'cleanser' %}soap{% elif product.category == 'sunscreen' %}sun{% elif product.category == 'serum' %}eye-dropper{% elif product.category == 'moisturizer' %}spray-can{% else %}flask{% endif %}"></i>
+        </div>
+        <div style="flex: 1; margin-left: 16px;">
+            <h2 style="color: var(--primary-dark); margin: 0 0 5px 0;">Add to Routine</h2>
+            <p style="color: var(--dark-gray); margin: 0; font-size: 14px;">{{ product.brand }} - {{ product.name }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label" for="frequency">
+                <i class="fas fa-clock"></i> Frequency
+            </label>
+            <div style="
+                background: #ffffff;
+                border: 1.5px solid var(--border-gray, #f5c8db);
+                border-radius: 14px;
+                padding: 4px 16px;
+                box-shadow: 0 2px 8px rgba(255, 182, 193, 0.10);
+                display: flex;
+                align-items: center;
+                margin-bottom: 4px;
+            ">
+                <select 
+                    id="frequency"
+                    name="frequency" 
+                    class="form-control" 
+                    required
+                    style="
+                        border: none;
+                        outline: none;
+                        background: transparent;
+                        font-size: 16px;
+                        padding: 10px 0;
+                        width: 100%;
+                        color: var(--text-dark, #220018);
+                        appearance: none;
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                    "
+                >
+                    <option value="pm" selected>Evening (PM)</option>
+                    <option value="am">Morning (AM)</option>
+                    <option value="am_pm">Both AM & PM</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="as_needed">As Needed</option>
+                </select>
+                <i class="fas fa-chevron-down" style="margin-left: -28px; color: var(--border-gray); pointer-events: none;"></i>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="notes">
+                <i class="fas fa-sticky-note"></i> Notes (Optional)
+            </label>
+            <div style="
+                background: #ffffff;
+                border: 1.5px solid var(--border-gray, #f5c8db);
+                border-radius: 14px;
+                padding: 4px 16px;
+                box-shadow: 0 2px 8px rgba(255, 182, 193, 0.10);
+                display: flex;
+                align-items: center;
+                margin-bottom: 4px;
+            ">
+                <textarea 
+                    name="notes" 
+                    id="notes"
+                    class="form-control" 
+                    rows="3" 
+                    placeholder="Add any notes about how you use this product..."
+                    style="
+                        border: none;
+                        outline: none;
+                        background: transparent;
+                        font-size: 16px;
+                        color: var(--text-medium, #776178);
+                        width: 100%;
+                        height: 100%;
+                        resize: none;
+                        text-align: left;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 18px 0;
+                    "
+                ></textarea>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+            <a href="{% url 'products:product_detail' product.pk %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-check"></i> Add to Routine
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
