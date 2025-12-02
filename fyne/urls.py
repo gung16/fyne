@@ -27,7 +27,7 @@ urlpatterns = [
     
     # Authentication
     path('login/', custom_login, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login', http_method_names=['get', 'post']), name='logout'),
     
     # App URLs
     path('users/', include('users.urls')),

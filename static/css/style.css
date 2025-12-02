@@ -222,6 +222,12 @@ body {
 .btn-secondary:hover {
     background: var(--medium-gray);
 }
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
 /* Product Items */
 .product-item {
     display: flex;
