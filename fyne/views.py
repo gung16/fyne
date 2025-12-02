@@ -77,14 +77,17 @@ def custom_login(request):
                 if user:
                     login(request, user)
                     messages.success(request, 'Welcome back!')
-                    return redirect('dashboard')
+                    # Use HttpResponseRedirect for proper redirect
+                    from django.http import HttpResponseRedirect
+                    return HttpResponseRedirect('/')
             
             # Try normal authentication for other users
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
                 messages.success(request, 'Welcome back!')
-                return redirect('dashboard')
+                from django.http import HttpResponseRedirect
+                return HttpResponseRedirect('/')
             else:
                 messages.error(request, 'Invalid username or password.')
         except Exception as e:

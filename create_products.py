@@ -50,6 +50,7 @@ products = [
 created = []
 for p in products:
     product = SkincareProduct.objects.create(
+        user=admin,
         name=p['name'],
         brand=p['brand'],
         category=p['category'],

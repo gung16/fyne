@@ -8,7 +8,7 @@ from datetime import date
 def product_list(request):
     """List all products and user's active products"""
     user_products = ProductUsage.objects.filter(user=request.user, end_date__isnull=True)
-    all_products = SkincareProduct.objects.all()
+    all_products = SkincareProduct.objects.filter(user=request.user)
     
     # Get list of product IDs that are in user's routine
     user_product_ids = list(user_products.values_list('product_id', flat=True))
@@ -22,7 +22,7 @@ def product_list(request):
 @login_required
 def product_detail(request, pk):
     """View product details and safety check"""
-    product = get_object_or_404(SkincareProduct, pk=pk)
+    product = get_object_or_404(SkincareProduct, pk=pk, user=request.user)
     
     # Check if user has safety check for this product
     safety_check = IngredientSafety.objects.filter(
@@ -51,6 +51,7 @@ def add_product(request):
         ingredients_list = [ing.strip() for ing in ingredients_str.split(',') if ing.strip()] if ingredients_str else []
         
         product = SkincareProduct.objects.create(
+            user=request.user,
             name=request.POST.get('name'),
             brand=request.POST.get('brand'),
             category=request.POST.get('category'),
@@ -71,7 +72,7 @@ def add_product(request):
 @login_required
 def add_to_routine(request, pk):
     """Add product to user's routine"""
-    product = get_object_or_404(SkincareProduct, pk=pk)
+    product = get_object_or_404(SkincareProduct, pk=pk, user=request.user)
     
     if request.method == 'POST':
         ProductUsage.objects.create(
@@ -95,7 +96,7 @@ def ingredient_safety(request):
 @login_required
 def check_product_safety(request, pk):
     """Run safety check on a product"""
-    product = get_object_or_404(SkincareProduct, pk=pk)
+    product = get_object_or_404(SkincareProduct, pk=pk, user=request.user)
     
     # Simple safety logic (can be enhanced with AI/ML)
     risky_ingredients = ['alcohol', 'fragrance', 'parabens', 'sulfates']

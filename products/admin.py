@@ -3,9 +3,15 @@ from .models import SkincareProduct, ProductUsage, IngredientSafety
 
 @admin.register(SkincareProduct)
 class SkincareProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'brand', 'category', 'created_at')
-    list_filter = ('category', 'brand', 'created_at')
-    search_fields = ('name', 'brand', 'description')
+    list_display = ('user', 'name', 'brand', 'category', 'created_at')
+    list_filter = ('category', 'brand', 'created_at', 'user')
+    search_fields = ('name', 'brand', 'description', 'user__username')
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(user=request.user)
 
 @admin.register(ProductUsage)
 class ProductUsageAdmin(admin.ModelAdmin):
