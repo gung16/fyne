@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from checkpoints.models import DailyCheckpoint, UVReading
 from products.models import ProductUsage
 from progress.models import ProgressRecord
@@ -38,3 +40,51 @@ def dashboard(request):
     }
     
     return render(request, 'dashboard.html', context)
+
+def custom_login(request):
+    """Custom login view that auto-accepts admin/admin123"""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+        
+        # Auto-accept admin/admin123
+        if username == 'admin' and password == 'admin123':
+            # Check if admin user exists, create if not
+            from django.contrib.auth.models import User
+            try:
+                user = User.objects.get(username='admin')
+                # Ensure password is correct
+                if not user.check_password('admin123'):
+                    user.set_password('admin123')
+                    user.is_staff = True
+                    user.is_superuser = True
+                    user.save()
+            except User.DoesNotExist:
+                user = User.objects.create_user(
+                    username='admin',
+                    password='admin123',
+                    email='admin@fyne.com',
+                    is_staff=True,
+                    is_superuser=True
+                )
+            
+            # Authenticate and login
+            user = authenticate(request, username='admin', password='admin123')
+            if user:
+                login(request, user)
+                messages.success(request, 'Welcome back!')
+                return redirect('dashboard')
+        
+        # Try normal authentication for other users
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            messages.success(request, 'Welcome back!')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    
+    return render(request, 'login.html')

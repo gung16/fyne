@@ -32,6 +32,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "i-gusti411-fyne.pbp.cs.ui.ac.id"]
 
+# CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = [
+    "https://i-gusti411-fyne.pbp.cs.ui.ac.id",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
 
 # Application definition
 
