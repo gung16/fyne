@@ -10,46 +10,70 @@
 
 <!-- Current Stats -->
 {% if latest %}
-<div class="card">
-    <h3 class="card-title mb-10">Current Status</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, var(--secondary-pink), var(--secondary-light)); border-radius: 15px; color: white;">
-            <div style="font-size: 32px; font-weight: 700;">{{ latest.overall_skin_score|floatformat:0 }}</div>
-            <div style="font-size: 12px; opacity: 0.9;">Latest Score</div>
+<div class="card" style="background: white;">
+    <h3 style="color: var(--primary-dark); margin-bottom: 20px; font-size: 18px; font-weight: 600;">Current Status</h3>
+    
+    <!-- Score Cards -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div style="text-align: center; padding: 30px 20px; background: var(--light-gray); border-radius: 20px;">
+            <div style="font-size: 48px; font-weight: 700; margin-bottom: 8px; color: var(--primary-dark);">{{ latest.overall_skin_score|floatformat:0 }}</div>
+            <div style="font-size: 14px; color: var(--dark-gray); font-weight: 500;">Latest Score</div>
         </div>
-        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, var(--primary-dark), var(--primary-medium)); border-radius: 15px; color: white;">
-            <div style="font-size: 32px; font-weight: 700;">{{ avg_score|floatformat:0 }}</div>
-            <div style="font-size: 12px; opacity: 0.9;">Average Score</div>
+        <div style="text-align: center; padding: 30px 20px; background: var(--light-gray); border-radius: 20px;">
+            <div style="font-size: 48px; font-weight: 700; margin-bottom: 8px; color: var(--primary-dark);">{{ avg_score|floatformat:0 }}</div>
+            <div style="font-size: 14px; color: var(--dark-gray); font-weight: 500;">Average Score</div>
         </div>
     </div>
     
-    <div style="margin-top: 15px; padding: 15px; background: var(--light-gray); border-radius: 12px; text-align: center;">
-        <span class="trend-{{ latest.improvement_trend }}" style="font-size: 16px; font-weight: 600;">
-            <i class="fas fa-arrow-{% if latest.improvement_trend == 'improving' %}up{% elif latest.improvement_trend == 'declining' %}down{% else %}right{% endif %}"></i>
+    <!-- Trend Badge -->
+    <div style="padding: 16px; background: {% if latest.improvement_trend == 'improving' %}linear-gradient(135deg, #E8F5E9, #C8E6C9){% elif latest.improvement_trend == 'declining' %}linear-gradient(135deg, #FFEBEE, #FFCDD2){% else %}linear-gradient(135deg, #FFF9C4, #FFF59D){% endif %}; border-radius: 16px; text-align: center;">
+        <span style="font-size: 18px; font-weight: 700; color: {% if latest.improvement_trend == 'improving' %}#2E7D32{% elif latest.improvement_trend == 'declining' %}#C62828{% else %}#F57F17{% endif %};">
+            <i class="fas fa-arrow-{% if latest.improvement_trend == 'improving' %}up{% elif latest.improvement_trend == 'declining' %}down{% else %}right{% endif %}" style="margin-right: 10px;"></i>
             {{ latest.get_improvement_trend_display }}
         </span>
     </div>
 </div>
 {% endif %}
 
-<!-- Progress Timeline -->
+<!-- Progress Chart Visual -->
+{% if progress_records %}
+<div class="card">
+    <h3 class="card-title mb-10">Score Trend</h3>
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 120px; padding: 10px 5px; border-bottom: 2px solid var(--border-gray);">
+        {% for record in progress_records|slice:":7" reversed %}
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; margin: 0 3px;">
+            <div style="width: 100%; height: {{ record.overall_skin_score }}%; min-height: 20px; background: linear-gradient(180deg, var(--secondary-pink), var(--secondary-light)); border-radius: 8px 8px 0 0; position: relative; transition: all 0.3s;">
+                <span style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--primary-dark); white-space: nowrap;">{{ record.overall_skin_score|floatformat:0 }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-top: 8px; padding: 0 5px;">
+        {% for record in progress_records|slice:":7" reversed %}
+        <span style="font-size: 10px; color: var(--dark-gray); flex: 1; text-align: center;">{{ record.timestamp|date:"M d" }}</span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent History Timeline -->
 {% if progress_records %}
 <div class="card">
     <h3 class="card-title mb-10">Recent History</h3>
-    {% for record in progress_records %}
-    <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-            <div class="timeline-date">{{ record.timestamp|date:"M d, Y" }}</div>
-            <div class="timeline-text">
-                <strong>Score: {{ record.overall_skin_score|floatformat:0 }}</strong>
-                <span class="trend-{{ record.improvement_trend }}" style="margin-left: 10px;">
-                    <i class="fas fa-arrow-{% if record.improvement_trend == 'improving' %}up{% elif record.improvement_trend == 'declining' %}down{% else %}right{% endif %}"></i>
-                    {{ record.get_improvement_trend_display }}
-                </span>
+    {% for record in progress_records|slice:":5" %}
+    <div style="display: flex; gap: 12px; padding: 12px; background: var(--light-gray); border-radius: 12px; margin-bottom: 10px;">
+        <div style="min-width: 50px; text-align: center;">
+            <div style="font-size: 24px; font-weight: 700; color: var(--secondary-pink);">{{ record.overall_skin_score|floatformat:0 }}</div>
+            <div class="text-small" style="color: var(--dark-gray); font-size: 10px;">SCORE</div>
+        </div>
+        <div style="flex: 1; border-left: 2px solid var(--border-gray); padding-left: 12px;">
+            <div style="font-size: 12px; color: var(--dark-gray); margin-bottom: 4px;">{{ record.timestamp|date:"M d, Y - h:i A" }}</div>
+            <div style="display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; {% if record.improvement_trend == 'improving' %}background: #E8F5E9; color: #2E7D32;{% elif record.improvement_trend == 'declining' %}background: #FFEBEE; color: #C62828;{% else %}background: #FFF9C4; color: #F57F17;{% endif %}">
+                <i class="fas fa-arrow-{% if record.improvement_trend == 'improving' %}up{% elif record.improvement_trend == 'declining' %}down{% else %}right{% endif %}" style="margin-right: 5px; font-size: 10px;"></i>
+                {{ record.get_improvement_trend_display }}
             </div>
             {% if record.insight_notes %}
-            <p class="text-small" style="margin-top: 5px; color: var(--dark-gray);">{{ record.insight_notes }}</p>
+            <p class="text-small" style="margin-top: 8px; color: var(--text-medium); line-height: 1.4;">{{ record.insight_notes }}</p>
             {% endif %}
         </div>
     </div>
@@ -61,13 +85,20 @@
         <div class="empty-icon">📈</div>
         <div class="empty-title">No Progress Data Yet</div>
         <div class="empty-text">Complete daily checkpoints to track your progress</div>
-        <a href="{% url 'checkpoints:daily_checkpoint' %}" class="btn btn-primary">Start Tracking</a>
+        <a href="{% url 'checkpoints:daily_checkpoint' %}" class="btn btn-primary" style="margin-top: 15px;">
+            <i class="fas fa-camera"></i> Take First Checkpoint
+        </a>
     </div>
 </div>
 {% endif %}
 
-<!-- Insights -->
-<a href="{% url 'progress:insights' %}" class="btn btn-secondary btn-block">
-    <i class="fas fa-lightbulb"></i> View Insights & Recommendations
-</a>
+<!-- Quick Actions -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <a href="{% url 'checkpoints:daily_checkpoint' %}" class="btn btn-primary" style="padding: 14px;">
+        <i class="fas fa-camera"></i> New Scan
+    </a>
+    <a href="{% url 'progress:insights' %}" class="btn btn-secondary" style="padding: 14px;">
+        <i class="fas fa-lightbulb"></i> Insights
+    </a>
+</div>
 {% endblock %}

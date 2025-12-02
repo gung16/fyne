@@ -8,17 +8,20 @@ from datetime import date
 
 @login_required
 def daily_checkpoint(request):
-    """Create daily skin checkpoint"""
+    """Create daily skin checkpoint with AI camera analysis (using random values for prototype)"""
     if request.method == 'POST':
+        # Simulate AI computer vision analysis with random values
+        import random
+        
         checkpoint = DailyCheckpoint.objects.create(
             user=request.user,
-            acne_level=int(request.POST.get('acne_level', 0)),
-            oil_level=int(request.POST.get('oil_level', 0)),
-            dark_spot_score=int(request.POST.get('dark_spot_score', 0)),
-            redness_score=int(request.POST.get('redness_score', 0)),
-            hydration_score=int(request.POST.get('hydration_score', 0)),
-            texture_score=int(request.POST.get('texture_score', 0)),
-            notes=request.POST.get('notes', ''),
+            acne_level=random.randint(15, 45),
+            oil_level=random.randint(20, 60),
+            dark_spot_score=random.randint(10, 40),
+            redness_score=random.randint(5, 35),
+            hydration_score=random.randint(50, 85),
+            texture_score=random.randint(55, 90),
+            notes='Auto-analyzed via camera scan',
         )
         
         # Create progress record
@@ -30,18 +33,10 @@ def daily_checkpoint(request):
         progress.calculate_score()
         progress.analyze_trend()
         
-        messages.success(request, 'Daily checkpoint recorded successfully!')
+        messages.success(request, 'Skin analysis completed successfully!')
         return redirect('checkpoints:checkpoint_detail', pk=checkpoint.pk)
     
-    # Check if already done today
-    today_checkpoint = DailyCheckpoint.objects.filter(
-        user=request.user,
-        timestamp__date=date.today()
-    ).first()
-    
-    return render(request, 'checkpoints/daily_checkpoint.html', {
-        'today_checkpoint': today_checkpoint
-    })
+    return render(request, 'checkpoints/daily_checkpoint.html')
 
 @login_required
 def checkpoint_detail(request, pk):
